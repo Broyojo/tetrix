@@ -14,6 +14,12 @@ WINDOW_HEIGHT = BOARD_HEIGHT * BLOCK_SIZE
 FPS = 60
 DROP_EVENT = pygame.USEREVENT + 1
 SOFT_DROP_EVENT = pygame.USEREVENT + 2
+MOVE_LEFT_EVENT = pygame.USEREVENT + 3
+MOVE_RIGHT_EVENT = pygame.USEREVENT + 4
+ROTATE_EVENT = pygame.USEREVENT + 5
+
+AUTO_REPEAT_INITIAL = 180
+AUTO_REPEAT_INTERVAL = 60
 
 TETROMINO_SHAPES: Dict[str, Sequence[Sequence[str]]] = {
     "I": (
@@ -175,6 +181,17 @@ def main() -> None:
 
     running = True
     soft_drop_active = False
+    left_held = right_held = up_held = False
+    left_repeat_fast = right_repeat_fast = up_repeat_fast = False
+
+    def stop_directional_repeats() -> None:
+        nonlocal left_held, right_held, up_held
+        nonlocal left_repeat_fast, right_repeat_fast, up_repeat_fast
+        left_held = right_held = up_held = False
+        left_repeat_fast = right_repeat_fast = up_repeat_fast = False
+        pygame.time.set_timer(MOVE_LEFT_EVENT, 0)
+        pygame.time.set_timer(MOVE_RIGHT_EVENT, 0)
+        pygame.time.set_timer(ROTATE_EVENT, 0)
 
     while running:
         clock.tick(FPS)
@@ -190,22 +207,49 @@ def main() -> None:
                     pygame.time.set_timer(DROP_EVENT, drop_interval)
                     soft_drop_active = False
                     pygame.time.set_timer(SOFT_DROP_EVENT, 0)
+                    stop_directional_repeats()
                 elif not state.game_over:
                     locked = handle_key_down(event, state, soft_drop_active)
                     if event.key == pygame.K_DOWN:
                         soft_drop_active = True
                         pygame.time.set_timer(SOFT_DROP_EVENT, 50)
+                    if event.key == pygame.K_LEFT and not left_held:
+                        left_held = True
+                        left_repeat_fast = False
+                        pygame.time.set_timer(MOVE_LEFT_EVENT, AUTO_REPEAT_INITIAL)
+                    elif event.key == pygame.K_RIGHT and not right_held:
+                        right_held = True
+                        right_repeat_fast = False
+                        pygame.time.set_timer(MOVE_RIGHT_EVENT, AUTO_REPEAT_INITIAL)
+                    elif event.key == pygame.K_UP and not up_held:
+                        up_held = True
+                        up_repeat_fast = False
+                        pygame.time.set_timer(ROTATE_EVENT, AUTO_REPEAT_INITIAL)
                     if locked:
                         soft_drop_active = False
                         pygame.time.set_timer(SOFT_DROP_EVENT, 0)
                         drop_interval = drop_delay_for_level(state.level)
                         if state.game_over:
                             pygame.time.set_timer(DROP_EVENT, 0)
+                            stop_directional_repeats()
                         else:
                             pygame.time.set_timer(DROP_EVENT, drop_interval)
-            elif event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
-                soft_drop_active = False
-                pygame.time.set_timer(SOFT_DROP_EVENT, 0)
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_DOWN:
+                    soft_drop_active = False
+                    pygame.time.set_timer(SOFT_DROP_EVENT, 0)
+                elif event.key == pygame.K_LEFT:
+                    left_held = False
+                    left_repeat_fast = False
+                    pygame.time.set_timer(MOVE_LEFT_EVENT, 0)
+                elif event.key == pygame.K_RIGHT:
+                    right_held = False
+                    right_repeat_fast = False
+                    pygame.time.set_timer(MOVE_RIGHT_EVENT, 0)
+                elif event.key == pygame.K_UP:
+                    up_held = False
+                    up_repeat_fast = False
+                    pygame.time.set_timer(ROTATE_EVENT, 0)
             elif event.type == DROP_EVENT and not state.game_over:
                 if not move_piece(state, dy=1):
                     lines = state.board.lock_piece(state.current_piece)
@@ -216,6 +260,7 @@ def main() -> None:
                         pygame.time.set_timer(DROP_EVENT, 0)
                         pygame.time.set_timer(SOFT_DROP_EVENT, 0)
                         soft_drop_active = False
+                        stop_directional_repeats()
                     else:
                         pygame.time.set_timer(DROP_EVENT, drop_interval)
             elif event.type == SOFT_DROP_EVENT and soft_drop_active and not state.game_over:
@@ -224,6 +269,33 @@ def main() -> None:
                 else:
                     pygame.time.set_timer(SOFT_DROP_EVENT, 0)
                     soft_drop_active = False
+            elif event.type == MOVE_LEFT_EVENT:
+                if left_held and not state.game_over:
+                    move_piece(state, dx=-1)
+                    if not left_repeat_fast:
+                        pygame.time.set_timer(MOVE_LEFT_EVENT, AUTO_REPEAT_INTERVAL)
+                        left_repeat_fast = True
+                else:
+                    pygame.time.set_timer(MOVE_LEFT_EVENT, 0)
+                    left_repeat_fast = False
+            elif event.type == MOVE_RIGHT_EVENT:
+                if right_held and not state.game_over:
+                    move_piece(state, dx=1)
+                    if not right_repeat_fast:
+                        pygame.time.set_timer(MOVE_RIGHT_EVENT, AUTO_REPEAT_INTERVAL)
+                        right_repeat_fast = True
+                else:
+                    pygame.time.set_timer(MOVE_RIGHT_EVENT, 0)
+                    right_repeat_fast = False
+            elif event.type == ROTATE_EVENT:
+                if up_held and not state.game_over:
+                    rotate_piece(state, 1)
+                    if not up_repeat_fast:
+                        pygame.time.set_timer(ROTATE_EVENT, AUTO_REPEAT_INTERVAL)
+                        up_repeat_fast = True
+                else:
+                    pygame.time.set_timer(ROTATE_EVENT, 0)
+                    up_repeat_fast = False
 
         draw(screen, state, font, small_font)
         pygame.display.flip()
