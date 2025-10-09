@@ -6,6 +6,7 @@ from .state import GameState
 
 def move_piece(state: GameState, dx: int = 0, dy: int = 0, audio: Optional[AudioManager] = None) -> bool:
     piece = state.current_piece
+    state.apply_pending_garbage()
     if state.board.valid(piece, dx=dx, dy=dy):
         piece.x += dx
         piece.y += dy
@@ -17,6 +18,7 @@ def move_piece(state: GameState, dx: int = 0, dy: int = 0, audio: Optional[Audio
 
 def rotate_piece(state: GameState, direction: int, audio: Optional[AudioManager] = None) -> bool:
     piece = state.current_piece
+    state.apply_pending_garbage()
     target_rotation = piece.rotated(direction)
     kicks = [(0, 0), (-1, 0), (1, 0), (0, -1)]
     for dx, dy in kicks:
@@ -30,8 +32,9 @@ def rotate_piece(state: GameState, direction: int, audio: Optional[AudioManager]
     return False
 
 
-def hard_drop(state: GameState, audio: Optional[AudioManager] = None) -> bool:
+def hard_drop(state: GameState, audio: Optional[AudioManager] = None) -> int:
     piece = state.current_piece
+    state.apply_pending_garbage()
     distance = 0
     while state.board.valid(piece, dy=1):
         piece.y += 1
@@ -43,4 +46,4 @@ def hard_drop(state: GameState, audio: Optional[AudioManager] = None) -> bool:
         audio.play_hard_drop(lines)
     state.add_score_for_lines(lines)
     state.spawn_next()
-    return True
+    return lines

@@ -1,6 +1,7 @@
+import random
 from typing import List, Optional, Tuple
 
-from .constants import BOARD_HEIGHT, BOARD_WIDTH, PIECE_COLORS
+from .constants import BOARD_HEIGHT, BOARD_WIDTH, GARBAGE_COLOR, PIECE_COLORS
 from .pieces import Tetromino
 
 
@@ -48,3 +49,11 @@ class Board:
 
     def occupied(self, x: int, y: int) -> bool:
         return 0 <= x < BOARD_WIDTH and 0 <= y < BOARD_HEIGHT and self.grid[y][x] is not None
+
+    def add_garbage(self, lines: int) -> None:
+        for _ in range(lines):
+            hole = random.randrange(BOARD_WIDTH)
+            garbage_row: List[Optional[Tuple[int, int, int]]] = [GARBAGE_COLOR for _ in range(BOARD_WIDTH)]
+            garbage_row[hole] = None
+            self.grid.pop(0)
+            self.grid.append(garbage_row)
