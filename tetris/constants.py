@@ -1,8 +1,5 @@
 from pathlib import Path
 
-import pygame
-
-
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 20
 BLOCK_SIZE = 32

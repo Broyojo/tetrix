@@ -1,5 +1,4 @@
 import random
-from typing import Optional
 
 from .board import Board
 from .constants import BOARD_WIDTH, SCORES_PER_LINE

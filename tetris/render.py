@@ -4,7 +4,14 @@ from typing import Sequence, Tuple
 import pygame
 
 from .board import Board
-from .constants import BLOCK_SIZE, BOARD_HEIGHT, BOARD_PIXEL_WIDTH, BOARD_WIDTH, PIECE_COLORS, WINDOW_HEIGHT
+from .constants import (
+    BLOCK_SIZE,
+    BOARD_HEIGHT,
+    BOARD_PIXEL_WIDTH,
+    BOARD_WIDTH,
+    PIECE_COLORS,
+    WINDOW_HEIGHT,
+)
 from .pieces import Tetromino
 from .state import GameState
 
@@ -38,7 +45,13 @@ def draw_player_area(
     state = view.state
     draw_board(screen, state.board, origin_x, origin_y)
     draw_ghost_piece(screen, state.board, state.current_piece, origin_x, origin_y)
-    draw_piece(screen, state.current_piece, PIECE_COLORS[state.current_piece.shape_key], origin_x, origin_y)
+    draw_piece(
+        screen,
+        state.current_piece,
+        PIECE_COLORS[state.current_piece.shape_key],
+        origin_x,
+        origin_y,
+    )
     draw_sidebar(
         screen,
         state,
@@ -54,7 +67,9 @@ def draw_player_area(
         draw_game_over(screen, font, origin_x, origin_y)
 
 
-def draw_board(screen: pygame.Surface, board: Board, offset_x: int, offset_y: int) -> None:
+def draw_board(
+    screen: pygame.Surface, board: Board, offset_x: int, offset_y: int
+) -> None:
     for y in range(BOARD_HEIGHT):
         for x in range(BOARD_WIDTH):
             color = board.grid[y][x]
@@ -62,7 +77,12 @@ def draw_board(screen: pygame.Surface, board: Board, offset_x: int, offset_y: in
                 pygame.draw.rect(
                     screen,
                     color,
-                    pygame.Rect(offset_x + x * BLOCK_SIZE, offset_y + y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE),
+                    pygame.Rect(
+                        offset_x + x * BLOCK_SIZE,
+                        offset_y + y * BLOCK_SIZE,
+                        BLOCK_SIZE,
+                        BLOCK_SIZE,
+                    ),
                 )
 
 
@@ -149,7 +169,9 @@ def draw_sidebar(
         y += 24
 
 
-def draw_next_piece_preview(screen: pygame.Surface, piece: Tetromino, top_left: Tuple[int, int]) -> None:
+def draw_next_piece_preview(
+    screen: pygame.Surface, piece: Tetromino, top_left: Tuple[int, int]
+) -> None:
     preview_x, preview_y = top_left
     from .pieces import TETROMINO_SHAPES
 
@@ -178,8 +200,12 @@ def draw_grid(screen: pygame.Surface, offset_x: int, offset_y: int) -> None:
         pygame.draw.line(screen, (40, 40, 40), start_pos, end_pos)
 
 
-def draw_game_over(screen: pygame.Surface, font: pygame.font.Font, offset_x: int, offset_y: int) -> None:
-    overlay = pygame.Surface((BOARD_WIDTH * BLOCK_SIZE, BOARD_HEIGHT * BLOCK_SIZE), pygame.SRCALPHA)
+def draw_game_over(
+    screen: pygame.Surface, font: pygame.font.Font, offset_x: int, offset_y: int
+) -> None:
+    overlay = pygame.Surface(
+        (BOARD_WIDTH * BLOCK_SIZE, BOARD_HEIGHT * BLOCK_SIZE), pygame.SRCALPHA
+    )
     overlay.fill((0, 0, 0, 180))
     screen.blit(overlay, (offset_x, offset_y))
     text = font.render("Game Over - Press R", True, (250, 250, 250))

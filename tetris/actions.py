@@ -4,7 +4,9 @@ from .audio import AudioManager
 from .state import GameState
 
 
-def move_piece(state: GameState, dx: int = 0, dy: int = 0, audio: Optional[AudioManager] = None) -> bool:
+def move_piece(
+    state: GameState, dx: int = 0, dy: int = 0, audio: Optional[AudioManager] = None
+) -> bool:
     piece = state.current_piece
     state.apply_pending_garbage()
     if state.board.valid(piece, dx=dx, dy=dy):
@@ -16,7 +18,9 @@ def move_piece(state: GameState, dx: int = 0, dy: int = 0, audio: Optional[Audio
     return False
 
 
-def rotate_piece(state: GameState, direction: int, audio: Optional[AudioManager] = None) -> bool:
+def rotate_piece(
+    state: GameState, direction: int, audio: Optional[AudioManager] = None
+) -> bool:
     piece = state.current_piece
     state.apply_pending_garbage()
     target_rotation = piece.rotated(direction)

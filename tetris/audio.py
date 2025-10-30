@@ -7,7 +7,9 @@ import pygame
 from .constants import SAMPLE_RATE, TRACK_PATH
 
 
-def _sine_wave(freq: float, duration: float, volume: float) -> Optional[pygame.mixer.Sound]:
+def _sine_wave(
+    freq: float, duration: float, volume: float
+) -> Optional[pygame.mixer.Sound]:
     if freq <= 0 or duration <= 0:
         return None
     sample_count = max(1, int(duration * SAMPLE_RATE))

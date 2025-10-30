@@ -3,15 +3,12 @@ from typing import Dict, Iterable, Optional, Sequence, Tuple
 
 from .constants import BOARD_WIDTH
 
-
 TETROMINO_SHAPES: Dict[str, Sequence[Sequence[str]]] = {
     "I": (
         ("....", "XXXX", "....", "...."),
         ("..X.", "..X.", "..X.", "..X."),
     ),
-    "O": (
-        (".XX.", ".XX.", "....", "...."),
-    ),
+    "O": ((".XX.", ".XX.", "....", "...."),),
     "T": (
         (".X..", "XXX.", "....", "...."),
         (".X..", ".XX.", ".X..", "...."),

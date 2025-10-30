@@ -14,7 +14,7 @@ from .constants import (
     SIDE_PANEL,
     WINDOW_HEIGHT,
 )
-from .controls import ActionResult, InputMapping, handle_key_down
+from .controls import InputMapping, handle_key_down
 from .render import PlayerView, draw
 from .state import GameState
 
@@ -199,7 +199,9 @@ def run_game(
                             runtime.stop_drop_timer()
                             runtime.stop_repeat_timers()
                         else:
-                            runtime.set_drop_timer(drop_delay_for_level(runtime.state.level))
+                            runtime.set_drop_timer(
+                                drop_delay_for_level(runtime.state.level)
+                            )
 
                     mapping = runtime.mapping
                     if event.key == mapping.down:
@@ -208,11 +210,15 @@ def run_game(
                     elif event.key == mapping.left and not runtime.left_held:
                         runtime.left_held = True
                         runtime.left_repeat_fast = False
-                        pygame.time.set_timer(runtime.move_left_event, AUTO_REPEAT_INITIAL)
+                        pygame.time.set_timer(
+                            runtime.move_left_event, AUTO_REPEAT_INITIAL
+                        )
                     elif event.key == mapping.right and not runtime.right_held:
                         runtime.right_held = True
                         runtime.right_repeat_fast = False
-                        pygame.time.set_timer(runtime.move_right_event, AUTO_REPEAT_INITIAL)
+                        pygame.time.set_timer(
+                            runtime.move_right_event, AUTO_REPEAT_INITIAL
+                        )
                     elif event.key == mapping.rotate_cw and not runtime.rotate_held:
                         runtime.rotate_held = True
                         runtime.rotate_repeat_fast = False
@@ -267,7 +273,9 @@ def run_game(
                     if runtime.left_held and not state.game_over:
                         move_piece(state, dx=-1, audio=audio)
                         if not runtime.left_repeat_fast:
-                            pygame.time.set_timer(runtime.move_left_event, AUTO_REPEAT_INTERVAL)
+                            pygame.time.set_timer(
+                                runtime.move_left_event, AUTO_REPEAT_INTERVAL
+                            )
                             runtime.left_repeat_fast = True
                     else:
                         pygame.time.set_timer(runtime.move_left_event, 0)
@@ -276,7 +284,9 @@ def run_game(
                     if runtime.right_held and not state.game_over:
                         move_piece(state, dx=1, audio=audio)
                         if not runtime.right_repeat_fast:
-                            pygame.time.set_timer(runtime.move_right_event, AUTO_REPEAT_INTERVAL)
+                            pygame.time.set_timer(
+                                runtime.move_right_event, AUTO_REPEAT_INTERVAL
+                            )
                             runtime.right_repeat_fast = True
                     else:
                         pygame.time.set_timer(runtime.move_right_event, 0)
@@ -285,7 +295,9 @@ def run_game(
                     if runtime.rotate_held and not state.game_over:
                         rotate_piece(state, 1, audio=audio)
                         if not runtime.rotate_repeat_fast:
-                            pygame.time.set_timer(runtime.rotate_event, AUTO_REPEAT_INTERVAL)
+                            pygame.time.set_timer(
+                                runtime.rotate_event, AUTO_REPEAT_INTERVAL
+                            )
                             runtime.rotate_repeat_fast = True
                     else:
                         pygame.time.set_timer(runtime.rotate_event, 0)
@@ -439,7 +451,9 @@ def show_menu(
 
         screen.blit(title, title.get_rect(center=(screen.get_width() // 2, 120)))
         screen.blit(subtitle, subtitle.get_rect(center=(screen.get_width() // 2, 220)))
-        screen.blit(subtitle2, subtitle2.get_rect(center=(screen.get_width() // 2, 270)))
+        screen.blit(
+            subtitle2, subtitle2.get_rect(center=(screen.get_width() // 2, 270))
+        )
         screen.blit(info, info.get_rect(center=(screen.get_width() // 2, 340)))
         pygame.display.flip()
         clock.tick(60)

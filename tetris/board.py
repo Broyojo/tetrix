@@ -48,12 +48,18 @@ class Board:
         return cleared
 
     def occupied(self, x: int, y: int) -> bool:
-        return 0 <= x < BOARD_WIDTH and 0 <= y < BOARD_HEIGHT and self.grid[y][x] is not None
+        return (
+            0 <= x < BOARD_WIDTH
+            and 0 <= y < BOARD_HEIGHT
+            and self.grid[y][x] is not None
+        )
 
     def add_garbage(self, lines: int) -> None:
         for _ in range(lines):
             hole = random.randrange(BOARD_WIDTH)
-            garbage_row: List[Optional[Tuple[int, int, int]]] = [GARBAGE_COLOR for _ in range(BOARD_WIDTH)]
+            garbage_row: List[Optional[Tuple[int, int, int]]] = [
+                GARBAGE_COLOR for _ in range(BOARD_WIDTH)
+            ]
             garbage_row[hole] = None
             self.grid.pop(0)
             self.grid.append(garbage_row)
