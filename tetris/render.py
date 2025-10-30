@@ -93,18 +93,23 @@ def draw_ghost_piece(
     while board.valid(piece, dy=offset + 1):
         offset += 1
     ghost_y = piece.y + offset
-    ghost_color = tuple(max(0, c - 100) for c in PIECE_COLORS[piece.shape_key])
+    base_color = PIECE_COLORS[piece.shape_key]
+    fill_color = (*base_color, 80)
+    outline_color = tuple(min(255, c + 60) for c in base_color)
+    ghost_cell_surface = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE), pygame.SRCALPHA)
+    ghost_cell_surface.fill(fill_color)
     for cx, cy in piece.cells():
         board_y = ghost_y + cy
         if board_y < 0:
             continue
         px = offset_x + (piece.x + cx) * BLOCK_SIZE
         py = offset_y + board_y * BLOCK_SIZE
+        screen.blit(ghost_cell_surface, (px, py))
         pygame.draw.rect(
             screen,
-            ghost_color,
+            outline_color,
             pygame.Rect(px, py, BLOCK_SIZE, BLOCK_SIZE),
-            1,
+            2,
         )
 
 
